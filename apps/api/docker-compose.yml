@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  opensoc-db:
+    image: postgres:15
+    container_name: opensoc-db
+    environment:
+      POSTGRES_USER: opensoc
+      POSTGRES_PASSWORD: opensoc123
+      POSTGRES_DB: opensocdb
+    ports:
+      - "5433:5432"        # ⚠️ Important: use 5433 on host
+    volumes:
+      - opensoc_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  opensoc_data:

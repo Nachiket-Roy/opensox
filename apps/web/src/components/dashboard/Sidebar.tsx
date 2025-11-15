@@ -16,6 +16,7 @@ import {
   SparklesIcon,
   StarIcon,
   HeartIcon,
+  NewspaperIcon,
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
 import { useShowSidebar } from "@/store/useShowSidebar";
@@ -35,6 +36,11 @@ const SIDEBAR_ROUTES = [
     label: "Projects",
     icon: <FolderIcon className="size-5" />,
   },
+  {
+    path: "/dashboard/newsletter",
+    label: "Newsletter",
+    icon: <NewspaperIcon className="size-5" />,
+  }
 ];
 
 const getSidebarLinkClassName = (currentPath: string, routePath: string) => {

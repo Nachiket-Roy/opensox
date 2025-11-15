@@ -17,14 +17,13 @@ const NewsletterTimeline = () => {
   const [filterMonth, setFilterMonth] = useState<string>("all");
   const [filterYear, setFilterYear] = useState<string>("all");
   const [sortType, setSortType] = useState<"newest" | "oldest">("newest");
-  const previousActiveElement = useRef<HTMLElement | null>(null); 
+  const previousActiveElement = useRef<HTMLElement | null>(null);
 
   const closeModal = () => {
-  setSelectedNewsletter(null);
-  setExpandingCard(null);
-  previousActiveElement.current?.focus();
-};
-
+    setSelectedNewsletter(null);
+    setExpandingCard(null);
+    previousActiveElement.current?.focus();
+  };
 
   const parseDate = (dateStr: string): Date => {
     const months: Record<string, number> = {
@@ -81,43 +80,42 @@ const NewsletterTimeline = () => {
   }, []);
 
   useEffect(() => {
-  if (!selectedNewsletter) return;
+    if (!selectedNewsletter) return;
 
-  const modal = document.getElementById("newsletter-modal");
-  const firstFocusable = document.getElementById("modal-back-button");
+    const modal = document.getElementById("newsletter-modal");
+    const firstFocusable = document.getElementById("modal-back-button");
 
-  // store old focus
-  previousActiveElement.current = document.activeElement as HTMLElement;
+    // store old focus
+    previousActiveElement.current = document.activeElement as HTMLElement;
 
-  // move focus into modal
-  firstFocusable?.focus();
+    // move focus into modal
+    firstFocusable?.focus();
 
-  const handleTab = (e: KeyboardEvent) => {
-    if (!modal) return;
+    const handleTab = (e: KeyboardEvent) => {
+      if (!modal) return;
 
-    const focusable = modal.querySelectorAll<HTMLElement>(
-      'button, a, input, textarea, select, [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
+      const focusable = modal.querySelectorAll<HTMLElement>(
+        'button, a, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
 
-    if (e.key === "Tab") {
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
+      if (e.key === "Tab") {
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
-    }
-  };
+    };
 
-  document.addEventListener("keydown", handleTab);
-  return () => {
-    document.removeEventListener("keydown", handleTab);
-  };
-}, [selectedNewsletter]);
-
+    document.addEventListener("keydown", handleTab);
+    return () => {
+      document.removeEventListener("keydown", handleTab);
+    };
+  }, [selectedNewsletter]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -388,6 +386,7 @@ const NewsletterTimeline = () => {
                         {/* Read More Button */}
                         <button
                           onClick={() => {
+                            previousActiveElement.current = document.activeElement as HTMLElement;
                             setExpandingCard(index);
                             setTimeout(() => {
                               setSelectedNewsletter(newsletter);
@@ -424,8 +423,7 @@ const NewsletterTimeline = () => {
           aria-modal="true"
           aria-labelledby="modal-title"
           onClick={() => {
-            setSelectedNewsletter(null);
-            setExpandingCard(null);
+            closeModal();
           }}
         >
           <div
@@ -435,11 +433,8 @@ const NewsletterTimeline = () => {
             <div className="max-w-4xl mx-auto px-4 py-16">
               {/* Back Button */}
               <button
-                id="modal-back-button" 
-                onClick={() => {
-                  setSelectedNewsletter(null);
-                  setExpandingCard(null);
-                }}
+                id="modal-back-button"
+                onClick={closeModal}
                 className="group inline-flex items-center gap-2 px-4 py-2 mb-8 bg-[#15161A] hover:bg-[#15161A]/80 border border-[#15161A] rounded-lg transition-all"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

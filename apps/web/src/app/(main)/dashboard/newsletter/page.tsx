@@ -182,8 +182,7 @@ const NewsletterTimeline = () => {
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setSelectedNewsletter(null);
-        setExpandingCard(null);
+        closeModal();
       }
     };
 

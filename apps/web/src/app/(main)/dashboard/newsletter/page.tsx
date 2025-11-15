@@ -18,6 +18,49 @@ const NewsletterTimeline = () => {
   const [filterYear, setFilterYear] = useState<string>("all");
   const [sortType, setSortType] = useState<"newest" | "oldest">("newest");
 
+  const parseDate = (dateStr: string): Date => {
+    const months: Record<string, number> = {
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
+    };
+
+    const [month, dayWithComma, year] = dateStr.split(" ");
+
+    return new Date(
+      Number(year),
+      months[month],
+      Number(dayWithComma.replace(",", ""))
+    );
+  };
+  
+  const filteredNewsletters = newsletters
+    .filter((n) => {
+      const d = parseDate(n.date);
+      const month = d.getMonth() + 1;
+      const year = d.getFullYear();
+
+      const monthMatches =
+        filterMonth === "all" || Number(filterMonth) === month;
+      const yearMatches = filterYear === "all" || Number(filterYear) === year;
+
+      return monthMatches && yearMatches;
+    })
+    .sort((a, b) => {
+      const da = parseDate(a.date).getTime();
+      const db = parseDate(b.date).getTime();
+      return sortType === "newest" ? db - da : da - db;
+    });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLineHeight(100);
@@ -39,12 +82,17 @@ const NewsletterTimeline = () => {
           );
 
           if (entry.isIntersecting) {
-            if (!visibleCards.has(index)) {
-              setVisibleCards((prev) => new Set([...prev, index]));
-            }
-            setActiveDot(index);
-            setGlowingDot(index);
-            setTimeout(() => setGlowingDot(null), 300);
+            setVisibleCards((prev) => {
+              if (prev.has(index)) return prev;
+              return new Set([...prev, index]);
+            });
+            setActiveDot((prev) => {
+              if (prev !== index) {
+                setGlowingDot(index);
+                setTimeout(() => setGlowingDot(null), 300);
+              }
+              return index;
+            });
           }
         });
       },
@@ -56,7 +104,7 @@ const NewsletterTimeline = () => {
     });
 
     return () => observer.disconnect();
-  }, [visibleCards]);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -82,24 +130,19 @@ const NewsletterTimeline = () => {
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  useEffect(() => {
+    if (!selectedNewsletter) return;
 
-  const filteredNewsletters = newsletters
-    .filter((n) => {
-      const d = new Date(n.date);
-      const month = d.getMonth() + 1;
-      const year = d.getFullYear();
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedNewsletter(null);
+        setExpandingCard(null);
+      }
+    };
 
-      const monthMatches =
-        filterMonth === "all" || Number(filterMonth) === month;
-      const yearMatches = filterYear === "all" || Number(filterYear) === year;
-
-      return monthMatches && yearMatches;
-    })
-    .sort((a, b) => {
-      const da = new Date(a.date).getTime();
-      const db = new Date(b.date).getTime();
-      return sortType === "newest" ? db - da : da - db;
-    });
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [selectedNewsletter]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0E0E10] via-[#15161A] to-[#0E0E10] text-white">
@@ -117,7 +160,7 @@ const NewsletterTimeline = () => {
       <div className="flex flex-wrap gap-4 justify-center mb-10">
         <select
           value={sortType}
-          onChange={(e) => setSortType(e.target.value as any)}
+          onChange={(e) => setSortType(e.target.value as "newest" | "oldest")}
           className="bg-[#15161A] border border-[#27272A] rounded-lg px-3 py-2"
         >
           <option value="newest">Newest First</option>
@@ -229,11 +272,7 @@ const NewsletterTimeline = () => {
                 />
 
                 {/* Card */}
-                <div
-                  className={`md:grid md:grid-cols-2 md:gap-4 items-center ${
-                    isLeft ? "" : "direction-rtl"
-                  }`}
-                >
+                <div className="md:grid md:grid-cols-2 md:gap-4 items-center">
                   <div
                     className={
                       isLeft
@@ -334,6 +373,9 @@ const NewsletterTimeline = () => {
       {selectedNewsletter && (
         <div
           className="fixed inset-0 z-50 bg-[#0E0E10]/95 backdrop-blur-md animate-in fade-in duration-300"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
           onClick={() => {
             setSelectedNewsletter(null);
             setExpandingCard(null);
@@ -372,7 +414,10 @@ const NewsletterTimeline = () => {
 
                 <div className="p-8">
                   {/* Title */}
-                  <h1 className="text-4xl font-bold mb-4 text-white">
+                  <h1
+                    id="modal-title"
+                    className="text-4xl font-bold mb-4 text-white"
+                  >
                     {selectedNewsletter.title}
                   </h1>
 

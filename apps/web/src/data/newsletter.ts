@@ -5,7 +5,7 @@ export interface Newsletter {
   author: string;
   preview: string;
   content: string;
-  takeaways? : string[];
+  takeaways?: string[];
   image: string;
 }
 export const newsletters: Newsletter[] = [
@@ -70,7 +70,7 @@ export const newsletters: Newsletter[] = [
       ]
     },
     {
-      id: 6,
+      id: 5,
       title: "Web3 Foundation Technical Roadmap",
       date: "Nov 5, 2025",
       author: "Alexandre Dubois",
@@ -85,7 +85,7 @@ export const newsletters: Newsletter[] = [
       ]
     },
     {
-      id: 7,
+      id: 6,
       title: "Open Source Chip Design Initiative",
       date: "Oct 29, 2025",
       author: "Wei Zhang",
@@ -100,7 +100,7 @@ export const newsletters: Newsletter[] = [
       ]
     },
     {
-      id: 8,
+      id: 7,
       title: "Decentralized AI Training Network",
       date: "Oct 22, 2025",
       author: "Nadia Schmidt",
@@ -115,7 +115,7 @@ export const newsletters: Newsletter[] = [
       ]
     },
     {
-      id: 9,
+      id: 8,
       title: "Open Source Quantum Computing SDK",
       date: "Oct 15, 2025",
       author: "Dr. Benjamin Carter",
@@ -130,7 +130,7 @@ export const newsletters: Newsletter[] = [
       ]
     },
     {
-      id: 10,
+      id: 9,
       title: "Open Source Security Audit Results",
       date: "Oct 8, 2025",
       author: "Maria Gonzalez",

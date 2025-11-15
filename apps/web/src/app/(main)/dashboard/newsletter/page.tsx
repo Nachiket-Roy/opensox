@@ -17,6 +17,14 @@ const NewsletterTimeline = () => {
   const [filterMonth, setFilterMonth] = useState<string>("all");
   const [filterYear, setFilterYear] = useState<string>("all");
   const [sortType, setSortType] = useState<"newest" | "oldest">("newest");
+  const previousActiveElement = useRef<HTMLElement | null>(null); 
+
+  const closeModal = () => {
+  setSelectedNewsletter(null);
+  setExpandingCard(null);
+  previousActiveElement.current?.focus();
+};
+
 
   const parseDate = (dateStr: string): Date => {
     const months: Record<string, number> = {
@@ -42,7 +50,7 @@ const NewsletterTimeline = () => {
       Number(dayWithComma.replace(",", ""))
     );
   };
-  
+
   const filteredNewsletters = newsletters
     .filter((n) => {
       const d = parseDate(n.date);
@@ -71,6 +79,45 @@ const NewsletterTimeline = () => {
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+  if (!selectedNewsletter) return;
+
+  const modal = document.getElementById("newsletter-modal");
+  const firstFocusable = document.getElementById("modal-back-button");
+
+  // store old focus
+  previousActiveElement.current = document.activeElement as HTMLElement;
+
+  // move focus into modal
+  firstFocusable?.focus();
+
+  const handleTab = (e: KeyboardEvent) => {
+    if (!modal) return;
+
+    const focusable = modal.querySelectorAll<HTMLElement>(
+      'button, a, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.key === "Tab") {
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
+  document.addEventListener("keydown", handleTab);
+  return () => {
+    document.removeEventListener("keydown", handleTab);
+  };
+}, [selectedNewsletter]);
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -372,6 +419,7 @@ const NewsletterTimeline = () => {
       {/* Full Article View */}
       {selectedNewsletter && (
         <div
+          id="newsletter-modal"
           className="fixed inset-0 z-50 bg-[#0E0E10]/95 backdrop-blur-md animate-in fade-in duration-300"
           role="dialog"
           aria-modal="true"
@@ -388,6 +436,7 @@ const NewsletterTimeline = () => {
             <div className="max-w-4xl mx-auto px-4 py-16">
               {/* Back Button */}
               <button
+                id="modal-back-button" 
                 onClick={() => {
                   setSelectedNewsletter(null);
                   setExpandingCard(null);

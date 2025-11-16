@@ -11,8 +11,6 @@ import {
   HomeIcon,
   FolderIcon,
   ArrowRightOnRectangleIcon,
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
   SparklesIcon,
   StarIcon,
   DocumentTextIcon,
@@ -23,6 +21,7 @@ import { signOut, useSession } from "next-auth/react";
 import { ProfilePic } from "./ProfilePic";
 import { useSubscription } from "@/hooks/useSubscription";
 import { OpensoxProBadge } from "../sheet/OpensoxProBadge";
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 const SIDEBAR_ROUTES = [
   {
@@ -102,9 +101,9 @@ export default function Sidebar({ overlay = false }: { overlay?: boolean }) {
           className={isCollapsed ? "w-full flex justify-center" : ""}
         >
           {isCollapsed ? (
-            <ChevronDoubleRightIcon className="size-5 text-ox-purple" />
+            <ChevronRightIcon className="size-5 text-ox-purple" />
           ) : (
-            <ChevronDoubleLeftIcon className="size-5 text-ox-purple" />
+            <ChevronLeftIcon className="size-5 text-ox-purple" />
           )}
         </IconWrapper>
       </div>
@@ -201,7 +200,7 @@ function ProfileMenu({ isCollapsed }: { isCollapsed: boolean }) {
               </span>
               <span className="text-[10px] text-zinc-400">{userEmail}</span>
             </div>
-            <ChevronDoubleLeftIcon
+            <ChevronLeftIcon
               className={`size-4 text-zinc-400 transition-transform ${open ? "rotate-90" : "-rotate-90"}`}
             />
           </div>

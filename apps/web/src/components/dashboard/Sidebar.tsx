@@ -41,7 +41,8 @@ const SIDEBAR_ROUTES = [
     path: "/dashboard/newsletter",
     label: "Newsletter",
     icon: <NewspaperIcon className="size-5" />,
-  }
+  },
+  {
     path: "/dashboard/sheet",
     label: "OSS Sheet",
     icon: <DocumentTextIcon className="size-5" />,

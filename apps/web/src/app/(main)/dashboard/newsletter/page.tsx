@@ -69,6 +69,7 @@ const NewsletterTimeline = () => {
     });
 
   useEffect(() => {
+    if (filteredNewsletters.length === 0) return;
     const timer = setTimeout(() => {
       setLineHeight(100);
       setActiveDot(0);
@@ -85,8 +86,6 @@ const NewsletterTimeline = () => {
     const modal = document.getElementById("newsletter-modal");
     const firstFocusable = document.getElementById("modal-back-button");
 
-    // store old focus
-    previousActiveElement.current = document.activeElement as HTMLElement;
 
     // move focus into modal
     firstFocusable?.focus();
